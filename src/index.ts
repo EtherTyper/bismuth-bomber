@@ -51,10 +51,11 @@ const game = new (class MyScene {
         this.tValue += Math.PI / 100;
         this.tValue = this.tValue % (4 * Math.PI);
 
-        const currentValue = this.piecewiseFunction(this.tValue);
-        const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100);
-        const scalarDerivative = nextValue.subtract(currentValue);
-        const unitTangent = scalarDerivative.scale(1 / scalarDerivative.length());
+        const currentValue = this.piecewiseFunction(this.tValue); // r(t)
+        const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆x) ≈ r(t + dt)
+        const scaledDerivative = nextValue.subtract(currentValue); // ∆r ≈ (dr/dt) * ∆x
+        const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length());
+        // ∆r / ||∆r|| ≈ (r') * ∆x / (||r'|| * ∆x) = r' / ||r'|| = T(t)
 
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
