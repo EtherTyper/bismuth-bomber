@@ -11,3 +11,20 @@ html, body {
   height: 100%;
   touch-action: none;
 }
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:700');
+
+#pressS {
+  width: 10em;
+  height: 5em;
+  text-align: center;
+  border: 10px black solid;
+  font-family: 'Roboto', sans-serif;
+  background: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#infoi {
+  z-index: 10;
+}

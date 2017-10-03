@@ -3,6 +3,7 @@
     "sourceMap": true
   },
   "types": [
-    "babylonjs"
+    "babylonjs",
+    "mousetrap"
   ]
 }
