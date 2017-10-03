@@ -56,7 +56,7 @@ const game = new (class MyScene {
         const scalarDerivative = nextValue.subtract(currentValue);
         const unitTangent = scalarDerivative.scale(1 / scalarDerivative.length());
 
-        console.log(currentValue, nextValue, unitTangent);
+        if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
         this.sphere.position = currentValue;
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5)).add(new Vector3(0, 3, 0));
