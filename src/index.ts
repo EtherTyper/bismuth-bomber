@@ -3,6 +3,7 @@ import 'mousetrap';
 import './index.css';
 
 const canvas = document.querySelector("#renderCanvas") as HTMLCanvasElement;
+const statsTable = document.querySelector('#stats') as HTMLDivElement;
 const currentValueElement = document.querySelector('#currentValue') as HTMLTableDataCellElement;
 const nextValueElement = document.querySelector('#nextValue') as HTMLTableDataCellElement;
 const scaledDerivativeElement = document.querySelector('#scaledDerivative') as HTMLTableDataCellElement;
@@ -10,6 +11,8 @@ const unitTangentElement = document.querySelector('#unitTangent') as HTMLTableDa
 const nextScaledDerivativeElement = document.querySelector('#nextScaledDerivative') as HTMLTableDataCellElement;
 const scaledSecondDerivativeElement = document.querySelector('#scaledSecondDerivative') as HTMLTableDataCellElement;
 const curvatureElement = document.querySelector('#curvature') as HTMLTableDataCellElement;
+
+statsTable.hidden = true;
 
 const engine = new Engine(canvas, true);
 
@@ -50,6 +53,7 @@ const game = new (class MyScene {
                 this.scene.activeCamera = this.firstPersonCamera;
         });
         Mousetrap.bind('space', () => { this.paused = !this.paused; });
+        Mousetrap.bind('f 3', () => { statsTable.hidden = !statsTable.hidden; });
 
         setInterval(() => {
             if (!this.paused) {
