@@ -14,17 +14,24 @@ html, body {
 
 @import url('https://fonts.googleapis.com/css?family=Roboto:700');
 
-#pressS {
-  width: 10em;
-  height: 5em;
+.textBox {
   text-align: center;
   border: 10px black solid;
   font-family: 'Roboto', sans-serif;
   background: white;
   position: absolute;
+}
+
+#pressS {
+  width: 10em;
+  height: 5em;
   top: 0;
   left: 0;
 }
-#infoi {
-  z-index: 10;
+
+#stats {
+  width: 50em;
+  height: 6em;
+  top: 0;
+  right: 0;
 }

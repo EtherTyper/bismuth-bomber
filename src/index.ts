@@ -3,6 +3,7 @@ import 'mousetrap';
 import './index.css';
 
 const canvas = document.querySelector("#renderCanvas") as HTMLCanvasElement;
+const statsView = document.querySelector("#stats") as HTMLDivElement;
 const engine = new Engine(canvas, true);
 
 const game = new (class MyScene {
@@ -12,16 +13,15 @@ const game = new (class MyScene {
     private light: HemisphericLight;
     private sphere: Mesh;
     private ground: Mesh;
-    private tValue: number;
+    private tValue = 0;
+    private paused = false;
 
     constructor() {
         this.scene = new Scene(engine);
         this.scene.clearColor = new Color4(0, 1, 0);
 
         this.thirdPersonCamera = new FreeCamera("camera1", new Vector3(0, 5, -10), this.scene);
-
-        this.firstPersonCamera = new FreeCamera("camera2", new Vector3(0, 5, -10), this.scene);
-        // this.firstPersonCamera.lockedTarget = Vector3.Zero();
+        this.firstPersonCamera = new FreeCamera("camera2", new Vector3(0, 0, 0), this.scene);
 
         this.scene.activeCamera = this.thirdPersonCamera;
         this.thirdPersonCamera.attachControl(canvas, false);
@@ -36,15 +36,19 @@ const game = new (class MyScene {
         
         this.ground = Mesh.CreateGround("ground1", 6, 6, 2, this.scene);
 
-        this.tValue = 0
-
         Mousetrap.bind('s', () => {
             if (this.scene.activeCamera === this.firstPersonCamera)
                 this.scene.activeCamera = this.thirdPersonCamera;
             else if (this.scene.activeCamera === this.thirdPersonCamera)
                 this.scene.activeCamera = this.firstPersonCamera;
-        })
-        setInterval(this.updatePosition.bind(this), 25)
+        });
+        Mousetrap.bind('space', () => { this.paused = !this.paused; });
+
+        setInterval(() => {
+            if (!this.paused) {
+                this.updatePosition()
+            }
+        }, 25)
     }
 
     updatePosition() {
@@ -53,9 +57,17 @@ const game = new (class MyScene {
 
         const currentValue = this.piecewiseFunction(this.tValue); // r(t)
         const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆x) ≈ r(t + dt)
-        const scaledDerivative = nextValue.subtract(currentValue); // ∆r ≈ (dr/dt) * ∆x
+        const scaledDerivative = nextValue.subtract(currentValue); // ∆r ≈ (dr/dt) * ∆t
         const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length());
-        // ∆r / ||∆r|| ≈ (r') * ∆x / (||r'|| * ∆x) = r' / ||r'|| = T(t)
+        // ∆r / ||∆r|| ≈ (r') * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)
+
+        statsView.innerHTML = `
+            Current Position (r(t)): ${currentValue} <br>
+            Next Position (r(t + ∆x) ≈ r(t + dt)): ${nextValue} <br>
+            Scaled Derivative (∆r ≈ (dr/dt) * ∆t): ${nextValue} <br>
+            Unit Tangent Vector (∆r / ||∆r|| ≈ (r') * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)): <br>
+            ${unitTangent}
+        `
 
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
