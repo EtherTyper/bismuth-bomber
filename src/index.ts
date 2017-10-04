@@ -17,40 +17,38 @@ Mousetrap.bind('f 3', () => { statsTable.hidden = !statsTable.hidden; });
 
 const engine = new Engine(canvas, true);
 
-const game = new (class MyScene {
-    scene: Scene;
-    private thirdPersonCamera: FreeCamera;
-    private firstPersonCamera: FreeCamera;
-    private light: HemisphericLight;
-    private sphere: Mesh;
-    private ground: Mesh;
+function vectorToString(vector: Vector3, brackets = { left: '<', right: '>' }) {
+    const x = vector.x.toFixed(3).padStart(6);
+    const y = vector.y.toFixed(3).padStart(6);
+    const z = vector.z.toFixed(3).padStart(6);
+    return `${brackets.left}${x}, ${y}, ${z}${brackets.right}`;
+}
+
+const game = new (class Game {
+    private _scene = new Scene(engine);
+    private thirdPersonCamera = new FreeCamera("thirdPerson", new Vector3(0, 5, -10), this._scene);
+    private firstPersonCamera = new FreeCamera("firstPerson", new Vector3(0, 0, 0), this._scene);
+    private light = new HemisphericLight("light", new Vector3(0, 1, 0), this._scene);
+    private sphere = Mesh.CreateSphere("cart", 16, 2, this._scene);
+    private ground = Mesh.CreateGround("ground", 10, 10, 2, this._scene);
     private tValue = 0;
     private paused = false;
 
     constructor() {
-        this.scene = new Scene(engine);
-        this.scene.clearColor = new Color4(0, 1, 0);
+        this._scene.clearColor = new Color4(0, 1, 0);
+        this._scene.activeCamera = this.thirdPersonCamera;
 
-        this.thirdPersonCamera = new FreeCamera("camera1", new Vector3(0, 5, -10), this.scene);
-        this.firstPersonCamera = new FreeCamera("camera2", new Vector3(0, 0, 0), this.scene);
-
-        this.scene.activeCamera = this.thirdPersonCamera;
-
-        this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
         this.light.intensity = .5;
 
-        this.sphere = Mesh.CreateSphere("sphere1", 16, 2, this.scene);
         this.thirdPersonCamera.lockedTarget = this.sphere;
         this.firstPersonCamera.lockedTarget = this.sphere;
         this.sphere.position.y = 1;
-        
-        this.ground = Mesh.CreateGround("ground1", 6, 6, 2, this.scene);
 
         Mousetrap.bind('s', () => {
-            if (this.scene.activeCamera === this.firstPersonCamera)
-                this.scene.activeCamera = this.thirdPersonCamera;
-            else if (this.scene.activeCamera === this.thirdPersonCamera)
-                this.scene.activeCamera = this.firstPersonCamera;
+            if (this._scene.activeCamera === this.firstPersonCamera)
+                this._scene.activeCamera = this.thirdPersonCamera;
+            else if (this._scene.activeCamera === this.thirdPersonCamera)
+                this._scene.activeCamera = this.firstPersonCamera;
         });
         Mousetrap.bind('space', () => { this.paused = !this.paused; });
 
@@ -59,6 +57,10 @@ const game = new (class MyScene {
                 this.updatePosition()
             }
         }, 25)
+    }
+
+    get scene() {
+        return this._scene;
     }
 
     updatePosition() {
@@ -74,13 +76,14 @@ const game = new (class MyScene {
         const curvature = Vector3.Cross(scaledDerivative, scaledSecondDerivative).length() / scaledDerivative.length()**3;
         // ||(r' * ∆t) X (r'' * ∆t^2)|| / (||r'||^3 * ∆t^3) = ||r' X r''|| / ||r'||^3 = K(t)
 
-        currentValueElement.innerText = String(currentValue);
-        nextValueElement.innerText = String(nextValue);
-        scaledDerivativeElement.innerText = String(scaledDerivative);
-        unitTangentElement.innerText = String(unitTangent);
-        nextScaledDerivativeElement.innerText = String(nextScaledDerivative);
-        scaledSecondDerivativeElement.innerText = String(scaledSecondDerivative);
-        curvatureElement.innerHTML = String(curvature);
+        const parentheses = { left: '(', right: ')' };
+        currentValueElement.innerText = vectorToString(currentValue, parentheses);
+        nextValueElement.innerText = vectorToString(nextValue, parentheses);
+        scaledDerivativeElement.innerText = vectorToString(scaledDerivative);
+        unitTangentElement.innerText = vectorToString(unitTangent);
+        nextScaledDerivativeElement.innerText = vectorToString(nextScaledDerivative);
+        scaledSecondDerivativeElement.innerText = vectorToString(scaledSecondDerivative);
+        curvatureElement.innerHTML = curvature.toFixed(3);
 
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "sourceMap": true
+    "sourceMap": true,
+    "target": "ES2017"
   },
   "types": [
     "babylonjs",
