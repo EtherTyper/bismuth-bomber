@@ -109,7 +109,7 @@ const game = new (class MyScene {
     }
 
     secondCircle(t) {
-        return new Vector3(-Math.cos(t) - 1, 1, Math.sin(t))
+        return new Vector3(-2 * Math.cos(t) - 2, 1, 2 * Math.sin(t))
     }
 })();
 
