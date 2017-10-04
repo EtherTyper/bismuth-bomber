@@ -3,7 +3,11 @@ import 'mousetrap';
 import './index.css';
 
 const canvas = document.querySelector("#renderCanvas") as HTMLCanvasElement;
-const statsView = document.querySelector("#stats") as HTMLDivElement;
+const currentValueElement = document.querySelector('#currentValue') as HTMLTableDataCellElement;
+const nextValueElement = document.querySelector('#nextValue') as HTMLTableDataCellElement;
+const scaledDerivativeElement = document.querySelector('#scaledDerivative') as HTMLTableDataCellElement;
+const unitTangentElement = document.querySelector('#unitTangent') as HTMLTableDataCellElement;
+
 const engine = new Engine(canvas, true);
 
 const game = new (class MyScene {
@@ -61,13 +65,10 @@ const game = new (class MyScene {
         const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length());
         // ∆r / ||∆r|| ≈ (r') * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)
 
-        statsView.innerHTML = `
-            Current Position (r(t)): ${currentValue} <br>
-            Next Position (r(t + ∆x) ≈ r(t + dt)): ${nextValue} <br>
-            Scaled Derivative (∆r ≈ (dr/dt) * ∆t): ${nextValue} <br>
-            Unit Tangent Vector (∆r / ||∆r|| ≈ (r') * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)): <br>
-            ${unitTangent}
-        `
+        currentValueElement.innerText = String(currentValue);
+        nextValueElement.innerText = String(nextValue);
+        scaledDerivativeElement.innerText = String(scaledDerivative);
+        unitTangentElement.innerText = String(unitTangent);
 
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
@@ -84,11 +85,11 @@ const game = new (class MyScene {
     }
 
     firstCircle(t) {
-        return new Vector3(Math.cos(t) + 1, 1, Math.sin(t))
+        return new Vector3(Math.cos(t) + 1, Math.sin(t) + 2, Math.sin(t))
     }
 
     secondCircle(t) {
-        return new Vector3(-Math.cos(t) - 1, 1, Math.sin(t))
+        return new Vector3(-Math.cos(t) - 1, Math.sin(t) + 2, Math.sin(t))
     }
 })();
 

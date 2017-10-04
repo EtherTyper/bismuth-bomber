@@ -7,7 +7,26 @@
     <body>
         <canvas id="renderCanvas"></canvas>
         <div class="textBox" id="pressS">Press S to change perspective, and space to pause the <s>empty sphere</s> cart.</div>
-        <div class="textBox" id="stats">Press S to change perspective, and space to pause the <s>empty sphere</s> cart.</div>
+        <div class="textBox" id="stats">
+            <table>
+                <tr>
+                    <td>Current Position</td>
+                    <td id="currentValue"></td>
+                </tr>
+                <tr>
+                    <td>Next Position</td>
+                    <td id="nextValue"></td>
+                </tr>
+                <tr>
+                    <td>Scaled Derivative</td>
+                    <td id="scaledDerivative"></td>
+                </tr>
+                <tr>
+                    <td>Unit Tangent Vector</td>
+                    <td id="unitTangent"></td>
+                </tr>
+            </table>
+        </div>
         <script src="./app.bundle.js"></script>
     </body>
 </html>
