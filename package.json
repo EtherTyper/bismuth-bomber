@@ -19,7 +19,7 @@
     "mousetrap": "^1.6.1",
     "style-loader": "^0.19.0",
     "ts-loader": "^2.3.7",
-    "typescript": "next",
+    "typescript": "^2.6.0-dev.20171004",
     "webpack": "^3.6.0"
   }
 }
