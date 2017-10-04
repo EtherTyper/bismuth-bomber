@@ -13,6 +13,7 @@ const scaledSecondDerivativeElement = document.querySelector('#scaledSecondDeriv
 const curvatureElement = document.querySelector('#curvature') as HTMLTableDataCellElement;
 
 statsTable.hidden = true;
+Mousetrap.bind('f 3', () => { statsTable.hidden = !statsTable.hidden; });
 
 const engine = new Engine(canvas, true);
 
@@ -34,7 +35,6 @@ const game = new (class MyScene {
         this.firstPersonCamera = new FreeCamera("camera2", new Vector3(0, 0, 0), this.scene);
 
         this.scene.activeCamera = this.thirdPersonCamera;
-        this.thirdPersonCamera.attachControl(canvas, false);
 
         this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
         this.light.intensity = .5;
@@ -53,7 +53,6 @@ const game = new (class MyScene {
                 this.scene.activeCamera = this.firstPersonCamera;
         });
         Mousetrap.bind('space', () => { this.paused = !this.paused; });
-        Mousetrap.bind('f 3', () => { statsTable.hidden = !statsTable.hidden; });
 
         setInterval(() => {
             if (!this.paused) {
@@ -106,11 +105,11 @@ const game = new (class MyScene {
     }
 
     firstCircle(t) {
-        return new Vector3(Math.cos(t) + 1, Math.sin(t) + 2, Math.sin(t))
+        return new Vector3(Math.cos(t) + 1, 1, Math.sin(t))
     }
 
     secondCircle(t) {
-        return new Vector3(-Math.cos(t) - 1, Math.sin(t) + 2, Math.sin(t))
+        return new Vector3(-Math.cos(t) - 1, 1, Math.sin(t))
     }
 })();
 
