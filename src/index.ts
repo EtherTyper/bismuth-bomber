@@ -7,6 +7,9 @@ const currentValueElement = document.querySelector('#currentValue') as HTMLTable
 const nextValueElement = document.querySelector('#nextValue') as HTMLTableDataCellElement;
 const scaledDerivativeElement = document.querySelector('#scaledDerivative') as HTMLTableDataCellElement;
 const unitTangentElement = document.querySelector('#unitTangent') as HTMLTableDataCellElement;
+const nextScaledDerivativeElement = document.querySelector('#nextScaledDerivative') as HTMLTableDataCellElement;
+const scaledSecondDerivativeElement = document.querySelector('#scaledSecondDerivative') as HTMLTableDataCellElement;
+const curvatureElement = document.querySelector('#curvature') as HTMLTableDataCellElement;
 
 const engine = new Engine(canvas, true);
 
@@ -60,20 +63,34 @@ const game = new (class MyScene {
         this.tValue = this.tValue % (4 * Math.PI);
 
         const currentValue = this.piecewiseFunction(this.tValue); // r(t)
-        const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆x) ≈ r(t + dt)
-        const scaledDerivative = nextValue.subtract(currentValue); // ∆r ≈ (dr/dt) * ∆t
-        const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length());
-        // ∆r / ||∆r|| ≈ (r') * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)
+        const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
+        const scaledDerivative = this.scaledDerivative(this.tValue); // r ≈ (dr/dt) * ∆t
+        const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length()); // r' * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)
+        const nextScaledDerivative = this.scaledDerivative(this.tValue + Math.PI / 100); // r'(t + ∆t) ≈ r'(t + dt)
+        const scaledSecondDerivative = nextScaledDerivative.subtract(scaledDerivative); // ∆r' ≈ (r * ∆t) * ∆t = r * ∆t^2
+        const curvature = Vector3.Cross(scaledDerivative, scaledSecondDerivative).length() / scaledDerivative.length()**3;
+        // ||(r' * ∆t) X (r'' * ∆t^2)|| / (||r'||^3 * ∆t^3) = ||r' X r''|| / ||r'||^3 = K(t)
 
         currentValueElement.innerText = String(currentValue);
         nextValueElement.innerText = String(nextValue);
         scaledDerivativeElement.innerText = String(scaledDerivative);
         unitTangentElement.innerText = String(unitTangent);
+        nextScaledDerivativeElement.innerText = String(nextScaledDerivative);
+        scaledSecondDerivativeElement.innerText = String(scaledSecondDerivative);
+        curvatureElement.innerHTML = String(curvature);
 
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
         this.sphere.position = currentValue;
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5)).add(new Vector3(0, 3, 0));
+    }
+
+    scaledDerivative(t) {
+        const currentValue = this.piecewiseFunction(t); // r(t)
+        const nextValue = this.piecewiseFunction(t + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
+        const scaledDerivative = nextValue.subtract(currentValue); // ∆r ≈ r' * ∆t
+
+        return scaledDerivative;
     }
 
     piecewiseFunction(t) {
