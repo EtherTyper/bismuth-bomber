@@ -98,8 +98,6 @@ const game = new (class Game {
         scaledSecondDerivativeElement.innerText = vectorToString(scaledSecondDerivative);
         curvatureElement.innerHTML = curvature.toFixed(3);
 
-        if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
-
         this.sphere.position = currentValue.add(new Vector3(0, 1, 0));
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
