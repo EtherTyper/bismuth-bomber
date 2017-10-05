@@ -29,7 +29,7 @@ const game = new (class Game {
     private thirdPersonCamera = new FreeCamera("thirdPerson", new Vector3(0, 5, -10), this._scene);
     private firstPersonCamera = new FreeCamera("firstPerson", new Vector3(0, 0, 0), this._scene);
     private light = new HemisphericLight("light", new Vector3(0, 1, 0), this._scene);
-    private cart = Mesh.CreateSphere("cart", 1, 1, this._scene);
+    private cart = Mesh.CreateBox("cart", 1, this._scene);
     private ground = Mesh.CreateGround("ground", 10, 10, 2, this._scene);
     private cartPath: Mesh;
     private bounds = {
@@ -41,7 +41,7 @@ const game = new (class Game {
     private paused = false;
 
     constructor() {
-        this._scene.clearColor = new Color4(0, 1, 0);
+        this._scene.clearColor = new Color4(0, 0, 1, 0.5);
         this._scene.activeCamera = this.thirdPersonCamera;
 
         this.light.intensity = .5;
@@ -121,11 +121,11 @@ const game = new (class Game {
     }
 
     firstCircle(t) {
-        return new Vector3(Math.cos(t) + 1, 2 + Math.sin(t), Math.sin(t))
+        return new Vector3(Math.cos(t) + 1, 3 + Math.sin(t), Math.sin(t))
     }
 
     secondCircle(t) {
-        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 2 + Math.sin(t), 2 * Math.sin(t / 2 + Math.PI / 2))
+        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 3 + Math.sin(t), 2 * Math.sin(t / 2 + Math.PI / 2))
     }
 })();
 
