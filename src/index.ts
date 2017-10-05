@@ -29,9 +29,9 @@ const game = new (class Game {
     private thirdPersonCamera = new FreeCamera("thirdPerson", new Vector3(0, 5, -10), this._scene);
     private firstPersonCamera = new FreeCamera("firstPerson", new Vector3(0, 0, 0), this._scene);
     private light = new HemisphericLight("light", new Vector3(0, 1, 0), this._scene);
-    private cart = Mesh.CreateBox("cart", 1, this._scene);
+    private cart = Mesh.CreateSphere("cart", 1, 1, this._scene);
     private ground = Mesh.CreateGround("ground", 10, 10, 2, this._scene);
-    private blockPath: Mesh;
+    private cartPath: Mesh;
     private bounds = {
         begin: 0,
         increment: Math.PI / 100,
@@ -63,7 +63,7 @@ const game = new (class Game {
             pathArray.push(this.piecewiseFunction(t));
         }
 
-        this.blockPath = Mesh.CreateLines("lines", [...pathArray, pathArray[0]], this._scene);
+        this.cartPath = Mesh.CreateLines("lines", [...pathArray, pathArray[0]], this._scene);
 
         setInterval(() => {
             if (!this.paused) {
@@ -99,7 +99,7 @@ const game = new (class Game {
         curvatureElement.innerHTML = curvature.toFixed(3);
 
         this.cart.position = currentValue;
-        this.cart.rotation = new Vector3(Math.acos(unitTangent.y), -Math.atan2(unitTangent.z, unitTangent.x), 0);
+        this.cart.rotation = new Vector3(0, -Math.atan2(unitTangent.z, unitTangent.x), -Math.acos(unitTangent.y));
 
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
@@ -121,11 +121,11 @@ const game = new (class Game {
     }
 
     firstCircle(t) {
-        return new Vector3(Math.cos(t) + 1, 1, Math.sin(t))
+        return new Vector3(Math.cos(t) + 1, 2 + Math.sin(t), Math.sin(t))
     }
 
     secondCircle(t) {
-        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 1, 2 * Math.sin(t / 2 + Math.PI / 2))
+        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 2 + Math.sin(t), 2 * Math.sin(t / 2 + Math.PI / 2))
     }
 })();
 
