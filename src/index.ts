@@ -61,7 +61,7 @@ const game = new (class Game {
 
         let pathArray: Vector3[] = [];
         for (let t = this.bounds.begin; t < this.bounds.final; t += this.bounds.increment) {
-            pathArray.push(this.piecewiseFunction(t));
+            pathArray.push(Game.piecewiseFunction(t));
         }
 
         this.cartPath = Mesh.CreateLines("lines", [...pathArray, pathArray[0]], this._scene);
@@ -81,12 +81,12 @@ const game = new (class Game {
         this.tValue += this.bounds.increment;
         this.tValue = this.tValue % this.bounds.final;
 
-        const currentValue = this.piecewiseFunction(this.tValue); // r(t)
-        const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
-        const scaledDerivative = this.scaledDerivative(this.tValue); // r ≈ (dr/dt) * ∆t
+        const currentValue = Game.piecewiseFunction(this.tValue); // r(t)
+        const nextValue = Game.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
+        const scaledDerivative = Game.scaledDerivative(this.tValue); // r ≈ (dr/dt) * ∆t
         const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length()); // r' * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)
         const cartRotation = new Vector3(0, -Math.atan2(unitTangent.z, unitTangent.x), -Math.acos(unitTangent.y));
-        const nextScaledDerivative = this.scaledDerivative(this.tValue + Math.PI / 100); // r'(t + ∆t) ≈ r'(t + dt)
+        const nextScaledDerivative = Game.scaledDerivative(this.tValue + Math.PI / 100); // r'(t + ∆t) ≈ r'(t + dt)
         const scaledSecondDerivative = nextScaledDerivative.subtract(scaledDerivative); // ∆r' ≈ (r * ∆t) * ∆t = r * ∆t^2
         const curvature = Vector3.Cross(scaledDerivative, scaledSecondDerivative).length() / scaledDerivative.length()**3;
         // ||(r' * ∆t) X (r'' * ∆t^2)|| / (||r'||^3 * ∆t^3) = ||r' X r''|| / ||r'||^3 = K(t)
@@ -107,27 +107,25 @@ const game = new (class Game {
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
 
-    scaledDerivative(t) {
-        const currentValue = this.piecewiseFunction(t); // r(t)
-        const nextValue = this.piecewiseFunction(t + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
-        const scaledDerivative = nextValue.subtract(currentValue); // ∆r ≈ r' * ∆t
-
-        return scaledDerivative;
+    static scaledDerivative(t) {
+        const currentValue = Game.piecewiseFunction(t); // r(t)
+        const nextValue = Game.piecewiseFunction(t + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
+        return nextValue.subtract(currentValue); // ∆r ≈ r' * ∆t
     }
 
-    piecewiseFunction(t) {
+    static piecewiseFunction(t) {
         if (t <= Math.PI || t >= 5 * Math.PI) {
-            return this.firstCircle(t);
+            return Game.firstCircle(t);
         } else {
-            return this.secondCircle(t);
+            return Game.secondCircle(t);
         }
     }
 
-    firstCircle(t) {
+    static firstCircle(t) {
         return new Vector3(Math.cos(t) + 1, 3 + Math.sin(t), Math.sin(t))
     }
 
-    secondCircle(t) {
+    static secondCircle(t) {
         return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 3 + Math.sin(t), 2 * Math.sin(t / 2 + Math.PI / 2))
     }
 })();
