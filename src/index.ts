@@ -100,7 +100,7 @@ const game = new (class Game {
 
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
-        this.sphere.position = currentValue;
+        this.sphere.position = currentValue.add(new Vector3(0, 1, 0));
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
 
