@@ -13,7 +13,7 @@ const scaledSecondDerivativeElement = document.querySelector('#scaledSecondDeriv
 const curvatureElement = document.querySelector('#curvature') as HTMLTableDataCellElement;
 
 statsTable.hidden = true;
-Mousetrap.bind('f 3', () => { statsTable.hidden = !statsTable.hidden; });
+Mousetrap.bind('d', () => { statsTable.hidden = !statsTable.hidden; });
 
 const engine = new Engine(canvas, true);
 
@@ -84,6 +84,7 @@ const game = new (class Game {
         const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
         const scaledDerivative = this.scaledDerivative(this.tValue); // r ≈ (dr/dt) * ∆t
         const unitTangent = scaledDerivative.scale(1 / scaledDerivative.length()); // r' * ∆t / (||r'|| * ∆t) = r' / ||r'|| = T(t)
+        const cartRotation = new Vector3(0, -Math.atan2(unitTangent.z, unitTangent.x), -Math.acos(unitTangent.y));
         const nextScaledDerivative = this.scaledDerivative(this.tValue + Math.PI / 100); // r'(t + ∆t) ≈ r'(t + dt)
         const scaledSecondDerivative = nextScaledDerivative.subtract(scaledDerivative); // ∆r' ≈ (r * ∆t) * ∆t = r * ∆t^2
         const curvature = Vector3.Cross(scaledDerivative, scaledSecondDerivative).length() / scaledDerivative.length()**3;
@@ -99,7 +100,7 @@ const game = new (class Game {
         curvatureElement.innerHTML = curvature.toFixed(3);
 
         this.cart.position = currentValue;
-        this.cart.rotation = new Vector3(0, -Math.atan2(unitTangent.z, unitTangent.x), -Math.acos(unitTangent.y));
+        this.cart.rotation = cartRotation;
 
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
