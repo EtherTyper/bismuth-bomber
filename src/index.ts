@@ -29,7 +29,7 @@ const game = new (class Game {
     private thirdPersonCamera = new FreeCamera("thirdPerson", new Vector3(0, 5, -10), this._scene);
     private firstPersonCamera = new FreeCamera("firstPerson", new Vector3(0, 0, 0), this._scene);
     private light = new HemisphericLight("light", new Vector3(0, 1, 0), this._scene);
-    private sphere = Mesh.CreateSphere("cart", 16, 2, this._scene);
+    private sphere = Mesh.CreateBox("cart", 1, this._scene);
     private ground = Mesh.CreateGround("ground", 10, 10, 2, this._scene);
     private spherePath: Mesh;
     private bounds = {
@@ -98,7 +98,9 @@ const game = new (class Game {
         scaledSecondDerivativeElement.innerText = vectorToString(scaledSecondDerivative);
         curvatureElement.innerHTML = curvature.toFixed(3);
 
-        this.sphere.position = currentValue.add(new Vector3(0, 1, 0));
+        this.sphere.position = currentValue;
+        this.sphere.rotation = new Vector3(Math.acos(unitTangent.y), -Math.atan2(unitTangent.z, unitTangent.x), 0);
+
         this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
 
@@ -123,7 +125,7 @@ const game = new (class Game {
     }
 
     secondCircle(t) {
-        return new Vector3(-2 * Math.cos((t + Math.PI)/ 2) - 2, 1, 2 * Math.sin((t + Math.PI)/2))
+        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 1, 2 * Math.sin(t / 2 + Math.PI / 2))
     }
 })();
 
