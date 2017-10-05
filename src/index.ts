@@ -31,7 +31,13 @@ const game = new (class Game {
     private light = new HemisphericLight("light", new Vector3(0, 1, 0), this._scene);
     private sphere = Mesh.CreateSphere("cart", 16, 2, this._scene);
     private ground = Mesh.CreateGround("ground", 10, 10, 2, this._scene);
-    private tValue = 0;
+    private spherePath: Mesh;
+    private bounds = {
+        begin: 0,
+        increment: Math.PI / 100,
+        final: 6 * Math.PI
+    };
+    private tValue = this.bounds.begin;
     private paused = false;
 
     constructor() {
@@ -52,6 +58,13 @@ const game = new (class Game {
         });
         Mousetrap.bind('space', () => { this.paused = !this.paused; });
 
+        let pathArray: Vector3[] = [];
+        for (let t = this.bounds.begin; t < this.bounds.final; t += this.bounds.increment) {
+            pathArray.push(this.piecewiseFunction(t));
+        }
+
+        this.spherePath = Mesh.CreateLines("lines", [...pathArray, pathArray[0]], this._scene);
+
         setInterval(() => {
             if (!this.paused) {
                 this.updatePosition()
@@ -64,8 +77,8 @@ const game = new (class Game {
     }
 
     updatePosition() {
-        this.tValue += Math.PI / 100;
-        this.tValue = this.tValue % (4 * Math.PI);
+        this.tValue += this.bounds.increment;
+        this.tValue = this.tValue % this.bounds.final;
 
         const currentValue = this.piecewiseFunction(this.tValue); // r(t)
         const nextValue = this.piecewiseFunction(this.tValue + Math.PI / 100); // r(t + ∆t) ≈ r(t + dt)
@@ -88,7 +101,7 @@ const game = new (class Game {
         if (this.tValue % Math.PI <= 0.04) console.log(currentValue, nextValue, unitTangent);
 
         this.sphere.position = currentValue;
-        this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5)).add(new Vector3(0, 3, 0));
+        this.firstPersonCamera.position = currentValue.subtract(unitTangent.scale(5));
     }
 
     scaledDerivative(t) {
@@ -100,7 +113,7 @@ const game = new (class Game {
     }
 
     piecewiseFunction(t) {
-        if (t <= Math.PI || t >= 3 * Math.PI) {
+        if (t <= Math.PI || t >= 5 * Math.PI) {
             return this.firstCircle(t);
         } else {
             return this.secondCircle(t);
@@ -112,7 +125,7 @@ const game = new (class Game {
     }
 
     secondCircle(t) {
-        return new Vector3(-2 * Math.cos(t) - 2, 1, 2 * Math.sin(t))
+        return new Vector3(-2 * Math.cos((t + Math.PI)/ 2) - 2, 1, 2 * Math.sin((t + Math.PI)/2))
     }
 })();
 
