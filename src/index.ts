@@ -128,7 +128,7 @@ const game = new (class Game {
         nextScaledDerivativeElement.innerText = vectorToString(nextScaledDerivative);
         scaledSecondDerivativeElement.innerText = vectorToString(scaledSecondDerivative);
         curvatureElement.innerText = curvature.toFixed(3);
-        maxCurvatureElement.innerText = `K${vectorToString(this.maxCurvature.point, parentheses)} = ${this.maxCurvature.curvature}`
+        maxCurvatureElement.innerText = `K${vectorToString(this.maxCurvature.point, parentheses)} = ${this.maxCurvature.curvature.toFixed(3)}`
         arcLengthElement.innerText = this.arcLength.currentValue.toFixed(3);
 
         this.cart.position = currentValue;
