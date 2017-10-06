@@ -93,8 +93,9 @@ const game = new (class Game {
     updatePosition() {
         this.tValue += this.bounds.increment;
         if (this.tValue > this.bounds.final) {
-            this.tValue = this.tValue % this.bounds.final;
+            this.arcLength.currentValue += Game.piecewiseFunction(0).subtract(Game.piecewiseFunction(this.tValue)).length();
             this.arcLength.finished = true;
+            this.tValue = 0;
         }
 
         const currentValue = Game.piecewiseFunction(this.tValue); // r(t)
