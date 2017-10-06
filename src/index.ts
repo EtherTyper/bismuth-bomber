@@ -151,11 +151,11 @@ const game = new (class Game {
     }
 
     static firstCircle(t) {
-        return new Vector3(Math.cos(t) + 1, 2, Math.sin(t))
+        return new Vector3(Math.cos(t) + 1, 3 + Math.sin(t), Math.sin(t))
     }
 
     static secondCircle(t) {
-        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 2, 2 * Math.sin(t / 2 + Math.PI / 2))
+        return new Vector3(-2 * Math.cos(t / 2 + Math.PI / 2) - 2, 3 + Math.sin(t), 2 * Math.sin(t / 2 + Math.PI / 2))
     }
 })();
 
