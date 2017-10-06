@@ -12,6 +12,7 @@ const cartRotationElement = document.querySelector('#cartRotation') as HTMLTable
 const nextScaledDerivativeElement = document.querySelector('#nextScaledDerivative') as HTMLTableDataCellElement;
 const scaledSecondDerivativeElement = document.querySelector('#scaledSecondDerivative') as HTMLTableDataCellElement;
 const curvatureElement = document.querySelector('#curvature') as HTMLTableDataCellElement;
+const maxCurvaturePointElement = document.querySelector('#maxCurvaturePoint') as HTMLTableDataCellElement;
 const maxCurvatureElement = document.querySelector('#maxCurvature') as HTMLTableDataCellElement;
 const arcLengthElement = document.querySelector('#arcLength') as HTMLTableDataCellElement;
 
@@ -128,7 +129,8 @@ const game = new (class Game {
         nextScaledDerivativeElement.innerText = vectorToString(nextScaledDerivative);
         scaledSecondDerivativeElement.innerText = vectorToString(scaledSecondDerivative);
         curvatureElement.innerText = curvature.toFixed(3);
-        maxCurvatureElement.innerText = `K${vectorToString(this.maxCurvature.point, parentheses)} = ${this.maxCurvature.curvature.toFixed(3)}`
+        maxCurvaturePointElement.innerText = vectorToString(this.maxCurvature.point, parentheses);
+        maxCurvatureElement.innerText = this.maxCurvature.curvature.toFixed(3);
         arcLengthElement.innerText = this.arcLength.currentValue.toFixed(3);
 
         this.cart.position = currentValue;
