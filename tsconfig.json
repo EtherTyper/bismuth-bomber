@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "target": "ES2017"
+    "target": "ES2017",
+    "experimentalDecorators": true
   },
   "types": [
     "babylonjs",
