@@ -18,7 +18,7 @@ export default class CalculationHelper {
 
     @memoize
     valueAfter(t: number) {
-        return (t + this.bounds.increment) % this.bounds.final;
+        return (t + this.bounds.increment) % (this.bounds.final - this.bounds.begin) + this.bounds.begin;
     }
 
     @memoize
