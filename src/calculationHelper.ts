@@ -44,7 +44,7 @@ export default class CalculationHelper {
     scaledSecondDifferential(t: number) {
         const scaledDifferential = this.scaledDifferential(t); // ∆r ≈ r' * ∆t = dr
         const nextDifferential = this.scaledDifferential(this.valueAfter(t)); // r'(t + ∆t) * ∆t ≈ dr(t + dt)
-        return nextDifferential.subtract(scaledDifferential); // ∆dr ≈ (r' * ∆t)' * ∆t = r'' * ∆t^2 = d2r/dt2
+        return nextDifferential.subtract(scaledDifferential); // ∆dr ≈ (r' * ∆t)' * ∆t = r'' * ∆t^2 = (d^2)r
     }
 
     @memoize
