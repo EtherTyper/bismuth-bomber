@@ -1,4 +1,5 @@
 import { Scene, Engine, Vector3, Color4, FreeCamera, HemisphericLight, Mesh } from 'babylonjs';
+import { range } from 'lodash';
 import formatVector from './formatVector';
 import { FunctionBounds } from './calculationHelper';
 import CalculationHelper from './calculationHelper';
@@ -59,11 +60,7 @@ export default class Game {
 
         this.ground = Mesh.CreateGround("ground", 10, 10, 2, this.scene);
 
-        let pathArray: Vector3[] = [];
-        for (let t = bounds.begin; t < bounds.final; t += bounds.increment) {
-            pathArray.push(pathFunction(t));
-        }
-
+        const pathArray: Vector3[] = range(bounds.begin, bounds.final, bounds.increment).map(pathFunction);
         this.cartPath = Mesh.CreateLines("lines", [...pathArray, pathArray[0]], this.scene);
 
         this.calculationHelper = new CalculationHelper(pathFunction, bounds);

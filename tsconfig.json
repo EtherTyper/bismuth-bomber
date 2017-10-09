@@ -2,10 +2,11 @@
   "compilerOptions": {
     "sourceMap": true,
     "target": "ES2017",
-    "experimentalDecorators": true
-  },
-  "types": [
-    "babylonjs",
-    "mousetrap"
-  ]
+    "experimentalDecorators": true,
+    "types": [
+      "babylonjs",
+      "lodash",
+      "mousetrap"
+    ]
+  }
 }
