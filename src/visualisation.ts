@@ -60,7 +60,7 @@ export default class Game {
 
         this.ground = Mesh.CreateGround("ground", 10, 10, 2, this.scene);
 
-        const pathArray: Vector3[] = range(bounds.begin, bounds.final, bounds.increment).map(pathFunction);
+        const pathArray = range(bounds.begin, bounds.final, bounds.increment).map(pathFunction);
         this.cartPath = Mesh.CreateLines("lines", [...pathArray, pathArray[0]], this.scene);
 
         this.calculationHelper = new CalculationHelper(pathFunction, bounds);
