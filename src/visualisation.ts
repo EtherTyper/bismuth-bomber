@@ -36,10 +36,6 @@ export default class Game {
         point: new Vector3(NaN, NaN, NaN),
         curvature: -1
     }
-    private arcLength = {
-        finished: false,
-        currentValue: 0
-    };
     private paused = false;
 
     constructor(engine: Engine, pathFunction: (t: number) => Vector3, bounds: FunctionBounds) {
@@ -90,14 +86,7 @@ export default class Game {
         const nextScaledDifferential = this.calculationHelper.scaledDifferential(this.calculationHelper.valueAfter(this.tValue));
         const scaledSecondDifferential = this.calculationHelper.scaledSecondDifferential(this.tValue);
         const curvature = this.calculationHelper.curvature(this.tValue);
-
-        if (!this.arcLength.finished) {
-            this.arcLength.currentValue += scaledDifferential.length();
-            
-            if (this.tValue + this.calculationHelper.bounds.increment > this.calculationHelper.bounds.final) {
-                this.arcLength.finished = true;
-            }
-        }
+        const arcLength = this.calculationHelper.arcLength();
         
         this.tValue = this.calculationHelper.valueAfter(this.tValue);
 
@@ -119,7 +108,7 @@ export default class Game {
         curvatureElement.innerText = curvature.toFixed(3);
         maxCurvaturePointElement.innerText = formatVector(this.maxCurvature.point, parentheses);
         maxCurvatureElement.innerText = this.maxCurvature.curvature.toFixed(3);
-        arcLengthElement.innerText = this.arcLength.currentValue.toFixed(3);
+        arcLengthElement.innerText = arcLength.toFixed(3);
 
         this.cart.position = currentValue;
         this.cart.rotation = cartRotation;

@@ -1,4 +1,5 @@
 import { Vector3 } from 'babylonjs';
+import { range, memoize } from 'lodash';
 
 export type FunctionBounds = {
     begin: number,
@@ -11,8 +12,20 @@ export default class CalculationHelper {
     bounds: FunctionBounds;
 
     constructor(pathFunction: (t: number) => Vector3, bounds: FunctionBounds) {
-        this.pathFunction = pathFunction;
+        this.pathFunction = memoize(pathFunction);
         this.bounds = bounds;
+
+        this.valueAfter = memoize(this.valueAfter);
+        this.scaledDifferential = memoize(this.scaledDifferential);
+        this.unitTangent = memoize(this.unitTangent);
+        this.cartRotation = memoize(this.cartRotation);
+        this.scaledSecondDifferential = memoize(this.scaledSecondDifferential);
+        this.curvature = memoize(this.curvature);
+        this.cameraPosition = memoize(this.cameraPosition);
+        this.derivativeMagnitude = memoize(this.derivativeMagnitude);
+        CalculationHelper.integrateFunction = memoize(CalculationHelper.integrateFunction);
+        CalculationHelper.integrateVVF = memoize(CalculationHelper.integrateVVF);
+        this.arcLength = memoize(this.arcLength);
     }
 
     valueAfter(t: number) {
@@ -52,5 +65,53 @@ export default class CalculationHelper {
         const currentValue = this.pathFunction(t);
         const unitTangent = this.unitTangent(t);
         return currentValue.subtract(unitTangent.scale(5)); // Look from behind the direction the cart is going.
+    }
+
+    static integrateFunction(integrand: (t: number) => number, bounds: FunctionBounds) {
+        if (bounds.begin > bounds.final + bounds.increment * 2) {
+            return -CalculationHelper.integrateFunction(integrand, {
+                ...bounds,
+                begin: bounds.final,
+                final: bounds.begin
+            });
+        } else if (bounds.final > bounds.begin + bounds.increment * 2) {
+            const prevIntegral = CalculationHelper.integrateFunction(integrand, {
+                ...bounds,
+                final: bounds.final - bounds.increment
+            })
+            const nextValue = integrand(bounds.final) * bounds.increment;
+
+            return prevIntegral + nextValue;
+        } else {
+            return 0;
+        }
+    }
+
+    static integrateVVF(integrand: (t: number) => Vector3, bounds: FunctionBounds) {
+        if (bounds.begin > bounds.final + bounds.increment * 2) {
+            return -CalculationHelper.integrateVVF(integrand, {
+                ...bounds,
+                begin: bounds.final,
+                final: bounds.begin
+            });
+        } else if (bounds.final >= bounds.begin) {
+            const prevIntegral = CalculationHelper.integrateVVF(integrand, {
+                ...bounds,
+                final: bounds.final - bounds.increment
+            })
+            const nextValue = integrand(bounds.final).scale(bounds.increment);
+
+            return prevIntegral.adding(nextValue);
+        } else {
+            return new Vector3(0, 0, 0);
+        }
+    }
+
+    derivativeMagnitude(t: number) {
+        return this.scaledDifferential(t).length() / this.bounds.increment;
+    }
+
+    arcLength() {
+        return CalculationHelper.integrateFunction(this.derivativeMagnitude.bind(this), this.bounds);
     }
 }
