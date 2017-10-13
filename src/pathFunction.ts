@@ -12,12 +12,16 @@ export const bounds = {
 const c = memoize(
     function c(s, d, t) {
         return d / s * t;
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 );
 
 const n0 = memoize(
     function n0(s, d, x) {
         return d * 27 * (x ** 3 - (3 / 2) * s * x ** 2) / (-4 * (3 / 2 * s) ** 3);
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 );
 
@@ -25,24 +29,32 @@ const n0 = memoize(
 const n1 = memoize(
     function n1(xp, x) {
         return (Math.atan(x / xp) + Math.PI / 2) / Math.PI;
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 );
 
 const n2 = memoize(
     function n2(x0, xp, x) {
         return n1(xp, x) - n1(xp, x0);
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 );
 
 const n3 = memoize(
     function n3(x0, x1, xp, x) {
         return n2(x0, xp, x + x0) / n2(x0, xp, x1);
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 );
 
 const n = memoize(
     function n(d, x0, x1, xp, x) {
         return n0(x1 + x0, d, (x1 + x0) * n3(-x0, x1, xp, x));
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 );
 
@@ -54,6 +66,8 @@ const p1 = memoize(
 
         return ((x - x0) ** 2) * ((x - x1) ** 2) /
             (((x1 - x0) ** 2) * ((x0 - x1) ** 2) / 16);
+    }, function(...args) {
+        return JSON.stringify(args);
     }
 )
 
@@ -113,13 +127,13 @@ const vy30Vector = memoize(
 const vy30Helper = new CalculationHelper(vy30Vector, this.bounds);
 
 const vx40Integrand = memoize(
-    function vx50Integrand(u) {
+    function (u) {
         return Math.cos(u**2);
     }
 )
 
 const vy40Integrand = memoize(
-    function vx50Integrand(u) {
+    function (u) {
         return Math.sin(u**2);
     }
 )
@@ -225,9 +239,115 @@ const vy4 = memoize(
     }
 )
 
+const vx50 = memoize(
+    function vy50(t) {
+        return (3/2)*(t**Math.cos(t))*Math.sin(t);
+    }
+)
+
+const vy5integrand = memoize(
+    function vy51Integrand(t) {
+        return c(45.2,
+            (vy60Helper.derivativeMagnitude(6)/vx60Helper.derivativeMagnitude(6)) -
+                (vy50Helper.derivativeMagnitude(45.2)/vx50Helper.derivativeMagnitude(45.2)), t) * vx50Helper.derivativeMagnitude(t)
+    }
+)
+
+const vy50 = memoize(
+    function vy50(t) {
+        return 3*((t*((Math.cos(t-(Math.PI/2)))**2))**Math.sin(2*t))
+    }
+)
+
+const vy51 = memoize(
+    function vy51(t) {
+        return vy50(t) + CalculationHelper.integrateFunction(vy5integrand, {
+            begin: 0,
+            final: t,
+            increment: bounds.increment
+        }))
+    }
+)
+
+const vx5 = memoize(
+    function vy5(t) {
+        return vx50(t) - vx50(0) + vx4((61*Math.PI/2)**(1/2))
+    }
+)
+
+const vy5 = memoize(
+    function vy5(t) {
+        return vy51(t) - vy50(0) + vy4((61*Math.PI/2)**(1/2))
+    }
+)
+
+const vy50Vector = memoize(
+    function(t) {
+        return new Vector3(0, vy50(t), 0);
+    }
+)
+
+const vy50Helper = new CalculationHelper(vy50Vector, this.bounds);
+
+const vx50Vector = memoize(
+    function(t) {
+        return new Vector3(vx50(t), 0, 0);
+    }
+)
+
+const vx50Helper = new CalculationHelper(vx50Vector, this.bounds);
+
+
+const vx60 = memoize(
+    (t) => 3*t
+)
+const vy60 = memoize(
+    function(t) {
+        return 6*sin(3*t)
+    }
+)
+
+const vx6 = memoize(t => vx60(t) - vx60(0) + vx5(45.2))
+
+const vy6 = memoize(t => vy60(t) - vy60(0) + vx5(45.2))
+
+const vx7 = memoize(function(t) {
+    return 50*cos(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
+})
+const vx7Vector = memoize(t => new Vector3(0, vx7(t), 0))
+const vx7Helper = new CalculationHelper(vx7Vector, this.bounds);
+
+const vy70 = memoize(function(t) {
+    return 50*sin(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
+})
+
+const vy71 = memoize(t => vy70(t) - vy70(0));
+const vy71Vector = memoize(t => new Vector3(0, vy71(t), 0))
+const vy71Helper = new CalculationHelper(vy71Vector, this.bounds);
+
+const vy7integrand = memoize(function(u) {
+    return c(23*Math.PI, -vy71Helper.scaledDifferential(t) / vx7Helper.scaledDifferential(t), u) * vx7Helper.scaledDifferential(u);
+})
+
+const vy7 = memoize(
+    function (t) {
+        return vy71(t) + CalculationHelper.integrateFunction(vy7integrand, {
+            begin: 0,
+            final: t,
+            increment: this.bounds.increment
+        })
+    }
+)
+
+const vy80 = memoize(
+    function (t) {
+        return t ** 2
+    }
+)
+
 export default function pathFunction(t) {
     if (t <= 15) {
-        return new Vector3(t, 0, 0);
+        return new Vector3(vx4(t),vy4(t),0);
     } else /*if (t <= 15 + 25)*/ {
         return new Vector3(vx2(t - 15), 0, vy2(t - 15));
     }
