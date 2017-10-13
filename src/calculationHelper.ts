@@ -23,8 +23,6 @@ export default class CalculationHelper {
         this.curvature = memoize(this.curvature);
         this.cameraPosition = memoize(this.cameraPosition);
         this.derivativeMagnitude = memoize(this.derivativeMagnitude);
-        CalculationHelper.integrateFunction = memoize(CalculationHelper.integrateFunction);
-        CalculationHelper.integrateVVF = memoize(CalculationHelper.integrateVVF);
         this.arcLength = memoize(this.arcLength);
     }
 
@@ -115,3 +113,6 @@ export default class CalculationHelper {
         return CalculationHelper.integrateFunction(this.derivativeMagnitude.bind(this), this.bounds);
     }
 }
+
+CalculationHelper.integrateFunction = memoize(CalculationHelper.integrateFunction);
+CalculationHelper.integrateVVF = memoize(CalculationHelper.integrateVVF);
