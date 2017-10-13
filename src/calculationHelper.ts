@@ -89,8 +89,6 @@ export default class CalculationHelper {
 
     static integrateVVF(integrand: (t: number) => Vector3, bounds: FunctionBounds): Vector3 {
         if (bounds.begin > bounds.final + bounds.increment * 2) {
-            console.log(new Vector3(1, 1, 1).negate())
-
             return CalculationHelper.integrateVVF(integrand, {
                 ...bounds,
                 begin: bounds.final,
