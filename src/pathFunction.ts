@@ -88,24 +88,6 @@ const j = memoize(
     }
 );
 
-const vy2integrand = memoize(
-    function vy2integrand() {
-
-    }
-)
-
-const vy2 = memoize(
-    function vy2(t) {
-        return CalculationHelper.integrateFunction(vy2integrand, )
-    }
-);
-
-const vx2 = memoize(
-    function vx2() {
-
-    }
-)
-
 const vx30 = memoize(
     function vx30(t) {
         return 5 / 2 * -Math.sin(1-t) * (10 ** Math.sin(1 - t));
@@ -188,6 +170,34 @@ const vy31 = memoize(
             final: 0,
             increment: bounds.increment
         })
+    }
+)
+const vy31Vector = memoize(
+    function vy31Vector(t) {
+        return new Vector3(0, vy31(t), 0);
+    }
+)
+const vy31Helper = new CalculationHelper(vy31Vector, this.bounds);
+
+const vy2integrand = memoize(
+    function vy2integrand(u) {
+        return c(25, vy31Helper.derivativeMagnitude(0)/vx30Helper.derivativeMagnitude(0), u);
+    }
+)
+
+const vy2 = memoize(
+    function vy2(t) {
+        return CalculationHelper.integrateFunction(vy2integrand, {
+            begin: 0,
+            final: t,
+            increment: bounds.increment
+        })
+    }
+);
+
+const vx2 = memoize(
+    function vx2(t) {
+        return t + 15
     }
 )
 
