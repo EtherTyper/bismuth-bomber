@@ -29,7 +29,7 @@ export default class CalculationHelper {
     }
 
     valueAfter(t: number) {
-        return (t + this.bounds.increment) % (this.bounds.final - this.bounds.begin) + this.bounds.begin;
+        return (t + this.bounds.increment - this.bounds.begin) % (this.bounds.final - this.bounds.begin) + this.bounds.begin;
     }
 
     scaledDifferential(t: number) {
@@ -87,21 +87,23 @@ export default class CalculationHelper {
         }
     }
 
-    static integrateVVF(integrand: (t: number) => Vector3, bounds: FunctionBounds) {
+    static integrateVVF(integrand: (t: number) => Vector3, bounds: FunctionBounds): Vector3 {
         if (bounds.begin > bounds.final + bounds.increment * 2) {
-            return -CalculationHelper.integrateVVF(integrand, {
+            console.log(new Vector3(1, 1, 1).negate())
+
+            return CalculationHelper.integrateVVF(integrand, {
                 ...bounds,
                 begin: bounds.final,
                 final: bounds.begin
-            });
-        } else if (bounds.final >= bounds.begin) {
+            }).negate();
+        } else if (bounds.final > bounds.begin + bounds.increment * 2) {
             const prevIntegral = CalculationHelper.integrateVVF(integrand, {
                 ...bounds,
                 final: bounds.final - bounds.increment
             })
             const nextValue = integrand(bounds.final).scale(bounds.increment);
 
-            return prevIntegral.adding(nextValue);
+            return prevIntegral.add(nextValue);
         } else {
             return new Vector3(0, 0, 0);
         }
