@@ -303,7 +303,7 @@ const vx60 = memoize(
 )
 const vy60 = memoize(
     function(t) {
-        return 6*sin(3*t)
+        return 6*Math.sin(3*t)
     }
 )
 
@@ -312,13 +312,13 @@ const vx6 = memoize(t => vx60(t) - vx60(0) + vx5(45.2))
 const vy6 = memoize(t => vy60(t) - vy60(0) + vx5(45.2))
 
 const vx7 = memoize(function(t) {
-    return 50*cos(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
+    return 50*Math.cos(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
 })
 const vx7Vector = memoize(t => new Vector3(0, vx7(t), 0))
 const vx7Helper = new CalculationHelper(vx7Vector, this.bounds);
 
 const vy70 = memoize(function(t) {
-    return 50*sin(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
+    return 50*Math.sin(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
 })
 
 const vy71 = memoize(t => vy70(t) - vy70(0));
@@ -326,7 +326,7 @@ const vy71Vector = memoize(t => new Vector3(0, vy71(t), 0))
 const vy71Helper = new CalculationHelper(vy71Vector, this.bounds);
 
 const vy7integrand = memoize(function(u) {
-    return c(23*Math.PI, -vy71Helper.scaledDifferential(t) / vx7Helper.scaledDifferential(t), u) * vx7Helper.scaledDifferential(u);
+    return c(23*Math.PI, -vy71Helper.derivativeMagnitude(u) / vx7Helper.derivativeMagnitude(u), u) * vx7Helper.derivativeMagnitude(u);
 })
 
 const vy7 = memoize(
