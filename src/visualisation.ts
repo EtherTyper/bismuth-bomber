@@ -74,7 +74,7 @@ export default class Game {
             if (!this.paused) {
                 this.updatePosition()
             }
-        }, 25)
+        }, 1000 / 60)
     }
 
     updatePosition() {

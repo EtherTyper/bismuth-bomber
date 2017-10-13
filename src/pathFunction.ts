@@ -4,9 +4,9 @@ import { FunctionBounds } from './calculationHelper';
 import CalculationHelper from './calculationHelper';
 
 export const bounds = {
-    begin: -2,
-    increment: 1 / 100,
-    final: 2
+    begin: 0,
+    increment: 1 / 20,
+    final: 40
 }
 
 const c = memoize(
@@ -201,5 +201,34 @@ const vx2 = memoize(
     }
 )
 
+const vx3 = memoize(
+    function vx3(t) {
+        return vx30(t) - vx30(0) + vx2(25)
+    }
+)
+
+const vy3 = memoize(
+    function vy3(t) {
+        return vy31(t) - vy31(0) + vy2(25)
+    }
+)
+
+const vx4 = memoize(
+    function vx4(t) {
+        return vx40(t) - vx40(-8.75) + vx3(1)
+    }
+)
+
+const vy4 = memoize(
+    function vy4(t) {
+        return vy40(t) - vy40(-8.75) + vy3(1)
+    }
+)
+
 export default function pathFunction(t) {
+    if (t <= 15) {
+        return new Vector3(t, 0, 0);
+    } else /*if (t <= 15 + 25)*/ {
+        return new Vector3(vx2(t - 15), 0, vy2(t - 15));
+    }
 }
