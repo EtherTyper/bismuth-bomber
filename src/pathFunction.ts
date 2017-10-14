@@ -265,7 +265,7 @@ const vy51 = memoize(
             begin: 0,
             final: t,
             increment: bounds.increment
-        }))
+        })
     }
 )
 
@@ -286,7 +286,6 @@ const vy50Vector = memoize(
         return new Vector3(0, vy50(t), 0);
     }
 )
-
 const vy50Helper = new CalculationHelper(vy50Vector, this.bounds);
 
 const vx50Vector = memoize(
@@ -294,7 +293,6 @@ const vx50Vector = memoize(
         return new Vector3(vx50(t), 0, 0);
     }
 )
-
 const vx50Helper = new CalculationHelper(vx50Vector, this.bounds);
 
 
@@ -325,12 +323,14 @@ const vy71 = memoize(t => vy70(t) - vy70(0));
 const vy71Vector = memoize(t => new Vector3(0, vy71(t), 0))
 const vy71Helper = new CalculationHelper(vy71Vector, this.bounds);
 
-const vy7integrand = memoize(function(u) {
-    return c(23*Math.PI, -vy71Helper.derivativeMagnitude(u) / vx7Helper.derivativeMagnitude(u), u) * vx7Helper.derivativeMagnitude(u);
-})
+const vy7integrand = memoize(
+    function vy7integrand(u) {
+        return c(23*Math.PI, -vy71Helper.derivativeMagnitude(u) / vx7Helper.derivativeMagnitude(u), u) * vx7Helper.derivativeMagnitude(u);
+    }
+)
 
 const vy7 = memoize(
-    function (t) {
+    function vy7(t) {
         return vy71(t) + CalculationHelper.integrateFunction(vy7integrand, {
             begin: 0,
             final: t,
@@ -339,8 +339,9 @@ const vy7 = memoize(
     }
 )
 
+// TODO
 const vy80 = memoize(
-    function (t) {
+    function vy80(t) {
         return t ** 2
     }
 )
