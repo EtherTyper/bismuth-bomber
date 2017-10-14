@@ -3,10 +3,37 @@ import { memoize } from 'lodash';
 import { FunctionBounds } from './calculationHelper';
 import CalculationHelper from './calculationHelper';
 
+const individualBounds = [
+    [0, 15],
+    [0, 25],
+    [0, 1],
+    [-8.75, Math.sqrt(61 * Math.PI / 2)],
+    [0, 45.2],
+    [-9 * Math.PI / 2, 6],
+    [0, 23 * Math.PI],
+    [0, 19.8]
+]
+
+let tRanges = []
+let finalBounds = 0
+for (const functionBounds of individualBounds) {
+    const length = functionBounds[1] - functionBounds[0]
+
+    tRanges.push({
+        begin: finalBounds,
+        length,
+        subtract: finalBounds - functionBounds[0]
+    })
+
+    finalBounds += length
+}
+
+console.log(tRanges)
+
 export const bounds = {
     begin: 0,
-    increment: 1 / 20,
-    final: 40
+    increment: 1 / 10,
+    final: finalBounds
 }
 
 const c = memoize(
@@ -245,6 +272,24 @@ const vx50 = memoize(
     }
 )
 
+const vx60 = memoize(
+    (t) => 3*t
+)
+const vx60Vector = memoize(
+    (t: number) => new Vector3(vx60(t), 0, 0)
+)
+const vx60Helper = new CalculationHelper(vx60Vector, this.bounds)
+
+const vy60 = memoize(
+    function(t) {
+        return 6*Math.sin(3*t)
+    }
+)
+const vy60Vector = memoize(
+    (t: number) => new Vector3(0, 0, vy60(t))
+)
+const vy60Helper = new CalculationHelper(vy60Vector, this.bounds)
+
 const vy5integrand = memoize(
     function vy51Integrand(t) {
         return c(45.2,
@@ -295,16 +340,6 @@ const vx50Vector = memoize(
 )
 const vx50Helper = new CalculationHelper(vx50Vector, this.bounds);
 
-
-const vx60 = memoize(
-    (t) => 3*t
-)
-const vy60 = memoize(
-    function(t) {
-        return 6*Math.sin(3*t)
-    }
-)
-
 const vx6 = memoize(t => vx60(t) - vx60(0) + vx5(45.2))
 
 const vy6 = memoize(t => vy60(t) - vy60(0) + vx5(45.2))
@@ -339,17 +374,63 @@ const vy7 = memoize(
     }
 )
 
-// TODO
-const vy80 = memoize(
-    function vy80(t) {
-        return t ** 2
+const vy8 = memoize(
+    function vy8(t) {
+        const dividend = t ** 2 * (t - 3 / 2 * vx6(-9 * Math.PI / 2));
+        const divisor = ((3 / 2 * vx6(-9 * Math.PI / 2)) ** 3) * (-4/27);
+        const thing2 = vy6(-9 * Math.PI / 2) - vy7(23 * Math.PI);
+
+        return dividend / divisor * thing2 + vy7(23 * Math.PI);
     }
 )
 
+const v1 = memoize(
+    function v1(t) {
+        return new Vector3(t, 0, 0);
+    }
+)
+const v2 = memoize(
+    function v2(t) {
+        return new Vector3(vx2(t), 0, vy2(t));
+    }
+)
+const v3 = memoize(
+    function v3(t) {
+        return new Vector3(vx3(t), 0, vy3(t));
+    }
+)
+const v4 = memoize(
+    function v4(t) {
+        return new Vector3(vx4(t), 0, vy4(t));
+    }
+)
+const v5 = memoize(
+    function v4(t) {
+        return new Vector3(vx5(t), 0, vy5(t));
+    }
+)
+const v6 = memoize(
+    function v6(t) {
+        return new Vector3(vx6(t), 0, vy6(t));
+    }
+)
+const v7 = memoize(
+    function v7(t) {
+        return new Vector3(vx7(t), 0, vy7(t));
+    }
+)
+const v8 = memoize(
+    function v8(t) {
+        return new Vector3(t, 0, vy8(t));
+    }
+)
+
+const piecewiseFunctionArray = [v1, v2, v3, v4, v5, v6, v7, v8]
+
 export default function pathFunction(t) {
-    if (t <= 15) {
-        return new Vector3(vx4(t),vy4(t),0);
-    } else /*if (t <= 15 + 25)*/ {
-        return new Vector3(vx2(t - 15), 0, vy2(t - 15));
+    for (const tRange of tRanges.entries()) {
+        if ((t <= tRange[1].begin) && (tRange.length > t + tRange[1].begin)) {
+            return piecewiseFunctionArray[tRange[0]](t - tRange[1].subtract);
+        }
     }
 }
