@@ -116,7 +116,7 @@ const h = memoize(
         return CalculationHelper.integrateFunction(f, {
             begin: 0,
             final: x,
-            increment: this.bounds.increment
+            increment: bounds.increment
         });
     }
 );
@@ -139,7 +139,7 @@ const vx30Vector = memoize(
         return new Vector3(vx30(t), 0, 0);
     }
 )
-const vx30Helper = new CalculationHelper(vx30Vector, this.bounds);
+const vx30Helper = new CalculationHelper(vx30Vector, bounds);
 
 const vy30 = memoize(
     function vy30(t) {
@@ -151,7 +151,7 @@ const vy30Vector = memoize(
         return new Vector3(0, vy30(t), 0);
     }
 )
-const vy30Helper = new CalculationHelper(vy30Vector, this.bounds);
+const vy30Helper = new CalculationHelper(vy30Vector, bounds);
 
 const vx40Integrand = memoize(
     function (u) {
@@ -179,7 +179,7 @@ const vx40Vector = memoize(
         return new Vector3(vx40(t), 0, 0);
     }
 )
-const vx40Helper = new CalculationHelper(vx40Vector, this.bounds);
+const vx40Helper = new CalculationHelper(vx40Vector, bounds);
 
 const vy40 = memoize(
     function vx40(t) {
@@ -195,7 +195,7 @@ const vy40Vector = memoize(
         return new Vector3(0, vy40(t), 0);
     }
 )
-const vy40Helper = new CalculationHelper(vy40Vector, this.bounds);
+const vy40Helper = new CalculationHelper(vy40Vector, bounds);
 
 const vy31Integrand = memoize(
     function vy31Integrand(u) {
@@ -218,7 +218,7 @@ const vy31Vector = memoize(
         return new Vector3(0, vy31(t), 0);
     }
 )
-const vy31Helper = new CalculationHelper(vy31Vector, this.bounds);
+const vy31Helper = new CalculationHelper(vy31Vector, bounds);
 
 const vy2integrand = memoize(
     function vy2integrand(u) {
@@ -278,7 +278,7 @@ const vx60 = memoize(
 const vx60Vector = memoize(
     (t: number) => new Vector3(vx60(t), 0, 0)
 )
-const vx60Helper = new CalculationHelper(vx60Vector, this.bounds)
+const vx60Helper = new CalculationHelper(vx60Vector, bounds)
 
 const vy60 = memoize(
     function(t) {
@@ -288,7 +288,7 @@ const vy60 = memoize(
 const vy60Vector = memoize(
     (t: number) => new Vector3(0, 0, vy60(t))
 )
-const vy60Helper = new CalculationHelper(vy60Vector, this.bounds)
+const vy60Helper = new CalculationHelper(vy60Vector, bounds)
 
 const vy5integrand = memoize(
     function vy51Integrand(t) {
@@ -331,14 +331,14 @@ const vy50Vector = memoize(
         return new Vector3(0, vy50(t), 0);
     }
 )
-const vy50Helper = new CalculationHelper(vy50Vector, this.bounds);
+const vy50Helper = new CalculationHelper(vy50Vector, bounds);
 
 const vx50Vector = memoize(
     function(t) {
         return new Vector3(vx50(t), 0, 0);
     }
 )
-const vx50Helper = new CalculationHelper(vx50Vector, this.bounds);
+const vx50Helper = new CalculationHelper(vx50Vector, bounds);
 
 const vx6 = memoize(t => vx60(t) - vx60(0) + vx5(45.2))
 
@@ -348,7 +348,7 @@ const vx7 = memoize(function(t) {
     return 50*Math.cos(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
 })
 const vx7Vector = memoize(t => new Vector3(0, vx7(t), 0))
-const vx7Helper = new CalculationHelper(vx7Vector, this.bounds);
+const vx7Helper = new CalculationHelper(vx7Vector, bounds);
 
 const vy70 = memoize(function(t) {
     return 50*Math.sin(24*Math.PI - Math.PI/2 - t)/(24*Math.PI - Math.PI/2 - t)
@@ -356,7 +356,7 @@ const vy70 = memoize(function(t) {
 
 const vy71 = memoize(t => vy70(t) - vy70(0));
 const vy71Vector = memoize(t => new Vector3(0, vy71(t), 0))
-const vy71Helper = new CalculationHelper(vy71Vector, this.bounds);
+const vy71Helper = new CalculationHelper(vy71Vector, bounds);
 
 const vy7integrand = memoize(
     function vy7integrand(u) {
@@ -369,7 +369,7 @@ const vy7 = memoize(
         return vy71(t) + CalculationHelper.integrateFunction(vy7integrand, {
             begin: 0,
             final: t,
-            increment: this.bounds.increment
+            increment: bounds.increment
         })
     }
 )
@@ -425,13 +425,39 @@ const v8 = memoize(
     }
 )
 
-const piecewiseFunctionArray = [v1, v2, v3, v4, v5, v6, v7, v8]
+const boundsOfFunctions = [
+    { tRange: tRanges[0], pathFunction: v1 },
+    { tRange: tRanges[1], pathFunction: v2 },
+    { tRange: tRanges[2], pathFunction: v3 },
+    { tRange: tRanges[3], pathFunction: v4 },
+    { tRange: tRanges[4], pathFunction: v5 },
+    { tRange: tRanges[5], pathFunction: v6 },
+    { tRange: tRanges[6], pathFunction: v7 },
+    { tRange: tRanges[7], pathFunction: v8 }
+]
 
-export default function pathFunction(t) {
-    for (const [functionNumber, tRange] of tRanges.entries()) {
-        if ((t <= tRange.begin) && (tRange.length > t + tRange.begin)) {
-            console.log(piecewiseFunctionArray[functionNumber](t - tRange.subtract));
-            return piecewiseFunctionArray[functionNumber](t - tRange.subtract);
+console.log(boundsOfFunctions)
+
+const xyPathFunction = memoize(
+    function pathFunction(t) {
+        for (const { tRange, pathFunction } of boundsOfFunctions) {
+            if ((t <= tRange.begin) && (tRange.length > t - tRange.begin)) {
+                const result = pathFunction(t - tRange.subtract);
+
+                if (result == undefined) {
+                    console.log(`Undefined value on ${pathFunction.name}`)
+                }
+
+                return result;
+            }
         }
     }
-}
+)
+
+const debug = memoize(
+    function debug(t) {
+        return xyPathFunction(t) || new Vector3(0, 0, 0);
+    }
+)
+
+export default debug;
