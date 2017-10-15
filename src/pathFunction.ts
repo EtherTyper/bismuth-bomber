@@ -428,9 +428,10 @@ const v8 = memoize(
 const piecewiseFunctionArray = [v1, v2, v3, v4, v5, v6, v7, v8]
 
 export default function pathFunction(t) {
-    for (const tRange of tRanges.entries()) {
-        if ((t <= tRange[1].begin) && (tRange.length > t + tRange[1].begin)) {
-            return piecewiseFunctionArray[tRange[0]](t - tRange[1].subtract);
+    for (const [functionNumber, tRange] of tRanges.entries()) {
+        if ((t <= tRange.begin) && (tRange.length > t + tRange.begin)) {
+            console.log(piecewiseFunctionArray[functionNumber](t - tRange.subtract));
+            return piecewiseFunctionArray[functionNumber](t - tRange.subtract);
         }
     }
 }
